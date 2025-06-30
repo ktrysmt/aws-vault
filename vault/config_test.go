@@ -552,6 +552,44 @@ transitive_session_tags = tagOne ,tagTwo,tagThree
 	}
 }
 
+func TestPasskeyConfigurationParsing(t *testing.T) {
+	f := newConfigFile(t, []byte(`
+[profile passkey-profile]
+mfa_serial=arn:aws:iam::123456789012:mfa/user
+passkey_rp_id=aws-vault.local
+passkey_origin=https://aws-vault.local
+passkey_credential_id=Y3JlZGVudGlhbElk
+passkey_user_id=dXNlcklk
+`))
+	defer os.Remove(f)
+
+	cfg, err := vault.LoadConfig(f)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile, ok := cfg.ProfileSection("passkey-profile")
+	if !ok {
+		t.Fatalf("Expected to find passkey-profile")
+	}
+
+	if profile.PasskeyRPID != "aws-vault.local" {
+		t.Errorf("Expected PasskeyRPID to be 'aws-vault.local', got '%s'", profile.PasskeyRPID)
+	}
+
+	if profile.PasskeyOrigin != "https://aws-vault.local" {
+		t.Errorf("Expected PasskeyOrigin to be 'https://aws-vault.local', got '%s'", profile.PasskeyOrigin)
+	}
+
+	if profile.PasskeyCredentialID != "Y3JlZGVudGlhbElk" {
+		t.Errorf("Expected PasskeyCredentialID to be 'Y3JlZGVudGlhbElk', got '%s'", profile.PasskeyCredentialID)
+	}
+
+	if profile.PasskeyUserID != "dXNlcklk" {
+		t.Errorf("Expected PasskeyUserID to be 'dXNlcklk', got '%s'", profile.PasskeyUserID)
+	}
+}
+
 func TestSessionTaggingFromEnvironmentChainedRoles(t *testing.T) {
 	os.Setenv("AWS_SESSION_TAGS", "tagI=valI")
 	os.Setenv("AWS_TRANSITIVE_TAGS", " tagII")

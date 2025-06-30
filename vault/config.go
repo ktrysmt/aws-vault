@@ -146,6 +146,10 @@ type ProfileSection struct {
 	SourceIdentity          string `ini:"source_identity,omitempty"`
 	CredentialProcess       string `ini:"credential_process,omitempty"`
 	MfaProcess              string `ini:"mfa_process,omitempty"`
+	PasskeyRPID             string `ini:"passkey_rp_id,omitempty"`
+	PasskeyOrigin           string `ini:"passkey_origin,omitempty"`
+	PasskeyCredentialID     string `ini:"passkey_credential_id,omitempty"`
+	PasskeyUserID           string `ini:"passkey_user_id,omitempty"`
 }
 
 // SSOSessionSection is a [sso-session] section of the config file
